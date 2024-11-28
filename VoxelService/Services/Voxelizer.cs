@@ -12,7 +12,7 @@ public static class Voxelizer
 
         return VoxelizeMeshTriangles2(triangles, configuration.VoxelSize);
     }
-    
+
     public static HashSet<Voxel> VoxelizeMeshTriangles2(List<Triangle> triangles, float voxelSize)
     {
         var voxels = new HashSet<Voxel>();

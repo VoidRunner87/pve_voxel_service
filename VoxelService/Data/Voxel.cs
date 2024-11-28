@@ -2,18 +2,11 @@ using System.Numerics;
 
 namespace VoxelService.Data;
 
-public class Voxel
+public class Voxel(int x, int y, int z)
 {
-    private Voxel(int x, int y, int z)
-    {
-        X = x;
-        Y = y;
-        Z = z;
-    }
-
-    public int X { get; }
-    public int Y { get; }
-    public int Z { get; }
+    public int X { get; } = x;
+    public int Y { get; } = y;
+    public int Z { get; } = z;
 
     public override bool Equals(object? obj) => obj is Voxel v && v.X == X && v.Y == Y && v.Z == Z;
     public override int GetHashCode() => HashCode.Combine(X, Y, Z);
@@ -24,14 +17,22 @@ public class Voxel
         return new Vector3(X, Y, Z);
     }
 
-    public static Voxel Create(int x, int y, int z) => new(x, y, z);
-
     public static Voxel FromVector3(Vector3 point, float voxelSize)
     {
         return VoxelPool.Voxel(
-            (int)Math.Floor(point.X / voxelSize),
-            (int)Math.Floor(point.Y / voxelSize),
-            (int)Math.Floor(point.Z / voxelSize)
+            (int)(point.X / voxelSize),
+            (int)(point.Y / voxelSize),
+            (int)(point.Z / voxelSize)
         );
+    }
+    
+    public static Voxel operator +(Voxel a, Voxel b)
+    {
+        return VoxelPool.Voxel(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+    }
+    
+    public static Voxel operator -(Voxel a, Voxel b)
+    {
+        return VoxelPool.Voxel(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
     }
 }

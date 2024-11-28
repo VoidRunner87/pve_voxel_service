@@ -8,6 +8,11 @@ public static class VoxelPool
     
     public static Voxel Voxel(int x, int y, int z)
     {
-        return Pool.GetOrAdd((x, y, z), key => Data.Voxel.Create(key.Item1, key.Item2, key.Item3));
+        var key = (x, y, z);
+        
+        // Add to the pool or get existing
+        return Pool.GetOrAdd(key, static k => new Voxel(k.Item1, k.Item2, k.Item3));
     }
+
+    public static long GetCount() => Pool.Count;
 }

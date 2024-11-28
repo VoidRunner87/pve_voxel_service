@@ -77,10 +77,12 @@ public class VoxelCacheQueue(
                 }
             );
 
-            foreach (var voxel in elementVoxelsOutcome.Voxels)
-            {
-                voxels.Add(voxel);
-            }
+            // foreach (var voxel in elementVoxelsOutcome.Voxels)
+            // {
+            //     voxels.Add(voxel);
+            // }
+            
+            _logger.LogInformation("Found {Count} Voxels", voxels.Count);
 
             ConstructVoxelCache.SetConstructData(constructId, new ConstructVoxelData { Voxels = voxels });
         }

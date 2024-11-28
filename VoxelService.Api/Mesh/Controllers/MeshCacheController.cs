@@ -10,6 +10,19 @@ using VoxelService.Services;
 
 namespace VoxelService.Api.Mesh.Controllers;
 
+[Route("v1/voxel")]
+public class VoxelController : Controller
+{
+    [HttpGet]
+    [Route("stats")]
+    public IActionResult GetStats()
+    {
+        return Ok(
+            VoxelPool.GetCount()
+        );
+    }
+}
+
 [Route("v1/mesh/cache/{constructId:long}")]
 public class MeshCacheController(IServiceProvider provider) : Controller
 {

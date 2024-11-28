@@ -1,11 +1,11 @@
-﻿using NQ;
-using NQ.Interfaces;
+﻿using NQ.Interfaces;
 using NQutils.Def;
 using Orleans;
 using Services;
 using VoxelService.Api.Common.Extensions;
 using VoxelService.Api.Construct.Data;
 using VoxelService.Api.Construct.Interfaces;
+using VoxelService.Api.DU.Extensions;
 using VoxelService.Data;
 using BoundingBox = NQ.BoundingBox;
 
@@ -20,8 +20,6 @@ public class ConstructElementVoxelReaderService(IServiceProvider provider)
     public async Task<ConstructElementVoxelsOutcome> QueryConstructElementsBoundingBoxes(ulong constructId)
     {
         var voxelSize = ConfigurationReader.GetVoxelSize();
-        var constructInfoGrain = _orleans.GetConstructInfoGrain(constructId);
-        var constructInfo = await constructInfoGrain.Get();
         var constructElementsGrain = _orleans.GetConstructElementsGrain(constructId);
 
         var elements = await constructElementsGrain.GetElementsOfType<Element>();
@@ -31,20 +29,18 @@ public class ConstructElementVoxelReaderService(IServiceProvider provider)
         foreach (var element in elements)
         {
             var elementInfo = await constructElementsGrain.GetElement(element);
+            var offsetVoxel = Voxel.FromVector3(elementInfo.position.ToVector3(), voxelSize);
 
             voxels.Add(Voxel.FromVector3(elementInfo.position.ToVector3(), voxelSize));
 
-            var boundingBox = _elementBoundingBox.GetBoundingBoxInConstruct(
-                elementInfo.elementType,
-                elementInfo.position,
-                Quat.Identity,
-                (int)constructInfo.rData.geometry.size
+            var boundingBox = _elementBoundingBox.GetBoundingBox(
+                elementInfo.elementType
             );
 
-            var voxelList = ConvertBoundingBoxToVoxels(boundingBox, voxelSize);
+            var voxelList = boundingBox.ToVoxels(voxelSize);
             foreach (var v in voxelList)
             {
-                voxels.Add(v);
+                voxels.Add(v + offsetVoxel);
             }
         }
 
