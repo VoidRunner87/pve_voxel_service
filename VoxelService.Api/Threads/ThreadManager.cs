@@ -60,6 +60,11 @@ public class ThreadManager(IServiceProvider provider, CancellationToken cancella
     public Task Start()
     {
         var taskCompletionSource = new TaskCompletionSource();
+        cancellationToken.Register(_ =>
+        {
+            _timer.Stop();
+            CancelAllThreads();
+        }, null);
 
         _timer.Elapsed += (_, _) => { OnTimer(); };
         _timer.Start();
@@ -69,13 +74,6 @@ public class ThreadManager(IServiceProvider provider, CancellationToken cancella
 
     public void OnTimer()
     {
-        if (cancellationToken.IsCancellationRequested)
-        {
-            _timer.Stop();
-            CancelAllThreads();
-            return;
-        }
-        
         var sw = new Stopwatch();
         sw.Start();
         var threadIds = Enum.GetValues<ThreadId>();
