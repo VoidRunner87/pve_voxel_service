@@ -5,26 +5,9 @@ using SharpGLTF.Schema2;
 using VoxelService.Api.Construct.Data;
 using VoxelService.Api.Construct.Services;
 using VoxelService.Api.Mesh.Interfaces;
-using VoxelService.Data;
 using VoxelService.Services;
 
 namespace VoxelService.Api.Mesh.Controllers;
-
-[Route("v1/voxel")]
-public class VoxelController : Controller
-{
-    [HttpGet]
-    [Route("stats")]
-    public IActionResult GetStats()
-    {
-        return Ok(
-            new
-            {
-                Count = VoxelPool.GetCount(),
-            }
-        );
-    }
-}
 
 [Route("v1/mesh/cache/{constructId:long}")]
 public class MeshCacheController(IServiceProvider provider) : Controller
