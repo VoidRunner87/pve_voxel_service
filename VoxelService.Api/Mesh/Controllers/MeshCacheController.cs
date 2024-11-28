@@ -18,7 +18,10 @@ public class VoxelController : Controller
     public IActionResult GetStats()
     {
         return Ok(
-            VoxelPool.GetCount()
+            new
+            {
+                Count = VoxelPool.GetCount(),
+            }
         );
     }
 }

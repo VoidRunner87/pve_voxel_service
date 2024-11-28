@@ -31,9 +31,9 @@ public class Voxel_2
     public static Voxel FromVector3(Vector3 point, float voxelSize)
     {
         return VoxelPool.Voxel(
-            (int)Math.Floor(point.X / voxelSize),
-            (int)Math.Floor(point.Y / voxelSize),
-            (int)Math.Floor(point.Z / voxelSize)
+            (int)(point.X / voxelSize),
+            (int)(point.Y / voxelSize),
+            (int)(point.Z / voxelSize)
         );
     }
 

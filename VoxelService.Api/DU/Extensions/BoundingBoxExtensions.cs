@@ -13,13 +13,13 @@ public static class BoundingBoxExtensions
         var voxels = new List<Voxel>();
 
         // Calculate the minimum and maximum voxel indices based on the voxel size
-        var minX = (int)Math.Floor(boundingBox.min.x / voxelSize);
-        var minY = (int)Math.Floor(boundingBox.min.y / voxelSize);
-        var minZ = (int)Math.Floor(boundingBox.min.z / voxelSize);
+        var minX = (int)(boundingBox.min.x / voxelSize);
+        var minY = (int)(boundingBox.min.y / voxelSize);
+        var minZ = (int)(boundingBox.min.z / voxelSize);
 
-        var maxX = (int)Math.Floor(boundingBox.max.x / voxelSize);
-        var maxY = (int)Math.Floor(boundingBox.max.y / voxelSize);
-        var maxZ = (int)Math.Floor(boundingBox.max.z / voxelSize);
+        var maxX = (int)(boundingBox.max.x / voxelSize);
+        var maxY = (int)(boundingBox.max.y / voxelSize);
+        var maxZ = (int)(boundingBox.max.z / voxelSize);
 
         // Iterate over the voxel grid
         for (var x = minX; x <= maxX; x++)

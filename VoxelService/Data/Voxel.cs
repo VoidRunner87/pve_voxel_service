@@ -8,8 +8,24 @@ public class Voxel(int x, int y, int z)
     public int Y { get; } = y;
     public int Z { get; } = z;
 
-    public override bool Equals(object? obj) => obj is Voxel v && v.X == X && v.Y == Y && v.Z == Z;
-    public override int GetHashCode() => HashCode.Combine(X, Y, Z);
+    protected bool Equals(Voxel other)
+    {
+        return X == other.X && Y == other.Y && Z == other.Z;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Voxel)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y, Z);
+    }
+
     public override string ToString() => $"Voxel({X}, {Y}, {Z})";
 
     public Vector3 ToVector3()
