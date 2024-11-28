@@ -7,7 +7,7 @@ using Timer = System.Timers.Timer;
 
 namespace VoxelService.Api.Threads;
 
-public class ThreadManager(IServiceProvider provider) : IThreadManager
+public class ThreadManager(IServiceProvider provider, CancellationToken cancellationToken) : IThreadManager
 {
     private static ThreadManager? _instance;
     private readonly ConcurrentDictionary<ThreadId, CancellationTokenSource> _cancellationTokenSources = new();
@@ -17,9 +17,9 @@ public class ThreadManager(IServiceProvider provider) : IThreadManager
     private readonly ILogger _logger = provider.CreateLogger<ThreadManager>();
     private readonly Timer _timer = new(TimeSpan.FromSeconds(1));
 
-    public static ThreadManager GetInstance(IServiceProvider provider)
+    public static ThreadManager GetInstance(IServiceProvider provider, CancellationToken cancellationToken)
     {
-        return _instance ??= new ThreadManager(provider);
+        return _instance ??= new ThreadManager(provider, cancellationToken);
     }
 
     public void ReportHeartbeat(ThreadId threadId)
@@ -69,6 +69,13 @@ public class ThreadManager(IServiceProvider provider) : IThreadManager
 
     public void OnTimer()
     {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            _timer.Stop();
+            CancelAllThreads();
+            return;
+        }
+        
         var sw = new Stopwatch();
         sw.Start();
         var threadIds = Enum.GetValues<ThreadId>();
