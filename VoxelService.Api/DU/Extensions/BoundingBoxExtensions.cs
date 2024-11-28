@@ -29,7 +29,7 @@ public static class BoundingBoxExtensions
                 for (var z = minZ; z <= maxZ; z++)
                 {
                     // Convert voxel indices back to world coordinates
-                    voxels.Add(VoxelPool.Voxel(x, y, z));
+                    voxels.Add(new Voxel(x, y, z));
                 }
             }
         }

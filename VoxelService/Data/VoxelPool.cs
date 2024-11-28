@@ -1,18 +1,24 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Caching.Memory;
 
 namespace VoxelService.Data;
 
 public static class VoxelPool
 {
-    private static readonly ConcurrentDictionary<(int, int, int), Voxel> Pool = new();
+    private static readonly MemoryCache Cache = new(new MemoryCacheOptions { TrackStatistics = true });
     
     public static Voxel Voxel(int x, int y, int z)
     {
         var key = (x, y, z);
-        
-        // Add to the pool or get existing
-        return Pool.GetOrAdd(key, static k => new Voxel(k.Item1, k.Item2, k.Item3));
+
+        return Cache.GetOrCreate(
+            key,
+            _ => new Voxel(x, y, z),
+            new MemoryCacheEntryOptions
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(1)
+            }
+        )!;
     }
 
-    public static long GetCount() => Pool.Count;
+    public static long GetCount() => Cache.Count;
 }

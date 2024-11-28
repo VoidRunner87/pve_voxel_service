@@ -62,7 +62,7 @@ public class ConstructElementVoxelReaderService(IServiceProvider provider)
             {
                 for (var z = minVoxel.Z; z <= maxVoxel.Z; z++)
                 {
-                    voxels.Add(VoxelPool.Voxel(x, y, z));
+                    voxels.Add(new Voxel(x, y, z));
                 }
             }
         }

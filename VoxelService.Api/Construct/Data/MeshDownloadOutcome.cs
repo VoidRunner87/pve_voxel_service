@@ -9,6 +9,13 @@ public class MeshDownloadOutcome
     public static MeshDownloadOutcome MeshDownloaded(Stream stream) 
         => new() { Success = true, Stream = stream };
 
+    public static MeshDownloadOutcome MeshIsCooking()
+        => new()
+        {
+            Success = false,
+            Message = "Failed to read mesh. Mesh is cooking."
+        };
+    
     public static MeshDownloadOutcome FailedToReadMesh(HttpResponseMessage responseMessage)
         => new()
         {

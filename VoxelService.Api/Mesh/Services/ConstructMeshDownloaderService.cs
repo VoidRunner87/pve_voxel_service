@@ -1,4 +1,5 @@
-﻿using VoxelService.Api.Construct.Data;
+﻿using System.Net;
+using VoxelService.Api.Construct.Data;
 using VoxelService.Api.Mesh.Interfaces;
 
 namespace VoxelService.Api.Mesh.Services;
@@ -19,6 +20,12 @@ public class ConstructMeshDownloaderService(IServiceProvider provider) : IConstr
 
         if (!responseMessage.IsSuccessStatusCode)
         {
+            var contents = await responseMessage.Content.ReadAsStringAsync();
+            if (responseMessage.StatusCode == HttpStatusCode.BadRequest && contents.Contains("Mesh is cooking"))
+            {
+                return MeshDownloadOutcome.MeshIsCooking();
+            }
+            
             return MeshDownloadOutcome.FailedToReadMesh(responseMessage);
         }
         

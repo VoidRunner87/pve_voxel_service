@@ -38,7 +38,7 @@ public static class Voxelizer
                         // var voxelCenter = VoxelToWorld(new Voxel(x, y, z), voxelSize);
 
                         // Add voxel (no detailed triangle-voxel intersection check here for simplicity)
-                        voxels.Add(VoxelPool.Voxel(x, y, z));
+                        voxels.Add(new Voxel(x, y, z).Pooled());
                     }
                 }
             }
@@ -49,7 +49,7 @@ public static class Voxelizer
 
     private static Voxel WorldToVoxel(Vector3 point, float voxelSize)
     {
-        return VoxelPool.Voxel(
+        return new Voxel(
             (int)(point.X / voxelSize),
             (int)(point.Y / voxelSize),
             (int)(point.Z / voxelSize)
