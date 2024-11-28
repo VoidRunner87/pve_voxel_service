@@ -92,8 +92,14 @@ public class MeshCacheController(IServiceProvider provider) : Controller
         }
 
         var model = ModelRoot.ReadGLB(outcome.Stream);
-        var voxels = Voxelizer.VoxelizeModel(model,
-            new VoxelizerConfiguration { VoxelSize = ConfigurationReader.GetVoxelSize() });
+        var constructVoxelData = ConstructVoxelCache.Get(constructId);
+
+        if (constructVoxelData == null)
+        {
+            return BadRequest();
+        }
+        
+        var voxels = constructVoxelData.Voxels;
 
         var position = request.FromPosition.ToVector3();
 

@@ -2,6 +2,7 @@
 using SharpGLTF.Schema2;
 using VoxelService.Api.Common;
 using VoxelService.Api.Construct.Data;
+using VoxelService.Api.Construct.Interfaces;
 using VoxelService.Api.Mesh.Interfaces;
 using VoxelService.Api.Threads;
 using VoxelService.Data;
@@ -14,13 +15,15 @@ public class VoxelCacheQueue(
     IThreadManager threadManager,
     IServiceProvider provider,
     CancellationToken cancellationToken
-)
-    : ThreadHandle(threadId, threadManager, cancellationToken)
+) : ThreadHandle(threadId, threadManager, cancellationToken)
 {
     private readonly ILogger _logger = provider.CreateLogger<VoxelCacheQueue>();
 
     private readonly IConstructMeshDownloaderService _constructMeshDownloaderService =
         provider.GetRequiredService<IConstructMeshDownloaderService>();
+
+    private readonly IConstructElementVoxelReaderService _constructElementVoxelReaderService =
+        provider.GetRequiredService<IConstructElementVoxelReaderService>();
 
     private TimeSpan TickSleep { get; set; } = TimeSpan.FromSeconds(1 / 60d);
 
@@ -36,23 +39,32 @@ public class VoxelCacheQueue(
             return;
         }
 
-        MeshDownloadOutcome outcome;
+        MeshDownloadOutcome meshDownloadOutcome;
+        ConstructElementVoxelsOutcome elementVoxelsOutcome;
 
-        using (var _ = new TimeMeasure(_logger, "mesh download"))
+        using (var _ = new TimeMeasure(_logger, "data download"))
         {
-            outcome = await _constructMeshDownloaderService.DownloadConstructMeshAsync(constructId, 2);
+            var readElementVoxelsTask = _constructElementVoxelReaderService
+                .QueryConstructElementsBoundingBoxes(constructId);
+            var downloadMeshTask = _constructMeshDownloaderService
+                .DownloadConstructMeshAsync(constructId, 2);
 
-            if (!outcome.Success)
+            await Task.WhenAll([readElementVoxelsTask, downloadMeshTask]);
+
+            meshDownloadOutcome = await downloadMeshTask;
+            elementVoxelsOutcome = await readElementVoxelsTask;
+
+            if (!meshDownloadOutcome.Success)
             {
                 ReportHeartbeat();
                 Thread.Sleep(TickSleep);
-                _logger.LogError("Failed to Download Mesh: {Message}", outcome.Message);
+                _logger.LogError("Failed to Download Mesh: {Message}", meshDownloadOutcome.Message);
 
                 return;
             }
         }
 
-        var model = ModelRoot.ReadGLB(outcome.Stream);
+        var model = ModelRoot.ReadGLB(meshDownloadOutcome.Stream);
         _logger.LogInformation("Read GLB");
 
         using (var _ = new TimeMeasure(_logger, "voxelization"))
@@ -64,7 +76,12 @@ public class VoxelCacheQueue(
                     VoxelSize = ConfigurationReader.GetVoxelSize()
                 }
             );
-            
+
+            foreach (var voxel in elementVoxelsOutcome.Voxels)
+            {
+                voxels.Add(voxel);
+            }
+
             ConstructVoxelCache.SetConstructData(constructId, new ConstructVoxelData { Voxels = voxels });
         }
 

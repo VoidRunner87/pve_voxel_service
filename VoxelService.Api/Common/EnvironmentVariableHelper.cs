@@ -8,7 +8,7 @@ public static class EnvironmentVariableHelper
     /// </summary>
     /// <returns></returns>
     public static bool IsProduction()
-        => GetEnvironmentVarOrDefault("ENVIRONMENT", "PROD") == "PROD";
+        => GetEnvironmentVarOrDefault("DOTNET_ENVIRONMENT", "Production") == "Production";
     
     public static string GetEnvironmentVarOrDefault(string varName, string defaultValue)
     {
