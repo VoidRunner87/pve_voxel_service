@@ -41,7 +41,7 @@ public class Voxel(int x, int y, int z)
     }
 
     // Packing and unpacking methods
-    private static long Pack(int x, int y, int z)
+    public static long Pack(int x, int y, int z)
     {
         // Ensure values fit within 21 bits (-2^20 to 2^20-1)
         const int maxValue = 0x1FFFFF; // 21 bits

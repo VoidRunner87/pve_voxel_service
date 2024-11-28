@@ -8,10 +8,8 @@ public static class VoxelPool
     
     public static Voxel Voxel(int x, int y, int z)
     {
-        var key = (x, y, z);
-
         return Cache.GetOrCreate(
-            key,
+            Data.Voxel.Pack(x, y, z),
             _ => new Voxel(x, y, z),
             new MemoryCacheEntryOptions
             {
