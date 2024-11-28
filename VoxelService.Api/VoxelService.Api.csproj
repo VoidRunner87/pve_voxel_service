@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-VoxelService.Api-AC82F6DF-2981-446A-BFC2-2A0B008E2232</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.1.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.1.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Construct\Repository\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\VoxelService\VoxelService.csproj" />
+    </ItemGroup>
+</Project>

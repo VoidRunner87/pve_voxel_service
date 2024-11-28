@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SharpGLTF.Core" Version="1.0.3" />
+      <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="mesh.glb" />
+      <None Remove="mesh1.glb" />
+      <None Remove="mesh2.glb" />
+      <None Remove="mesh3.glb" />
+      <None Remove="model.glb" />
+      <None Remove="output.glb" />
+    </ItemGroup>
+
+</Project>

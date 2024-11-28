@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoxelService", "VoxelService\VoxelService.csproj", "{DF786CBF-BCAE-467D-A66E-4034A7F36EB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoxelService.Api", "VoxelService.Api\VoxelService.Api.csproj", "{65E7FB4E-1DF2-48A4-B2B0-22F7AE1955AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF786CBF-BCAE-467D-A66E-4034A7F36EB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF786CBF-BCAE-467D-A66E-4034A7F36EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF786CBF-BCAE-467D-A66E-4034A7F36EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF786CBF-BCAE-467D-A66E-4034A7F36EB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65E7FB4E-1DF2-48A4-B2B0-22F7AE1955AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65E7FB4E-1DF2-48A4-B2B0-22F7AE1955AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65E7FB4E-1DF2-48A4-B2B0-22F7AE1955AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65E7FB4E-1DF2-48A4-B2B0-22F7AE1955AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
