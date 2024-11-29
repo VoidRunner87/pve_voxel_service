@@ -1,4 +1,6 @@
-﻿namespace VoxelService.Api;
+﻿using NQutils.Config;
+
+namespace VoxelService.Api;
 
 public static class ConfigurationReader
 {
@@ -9,7 +11,7 @@ public static class ConfigurationReader
         if (string.IsNullOrEmpty(url))
         {
             //Example: http://localhost:8081/public/voxels/constructs/1003409/mesh.glb?async=1&version=44219
-            return "http://localhost:8081";
+            return Config.Instance.VoxelServiceUrl();
         }
 
         return url;

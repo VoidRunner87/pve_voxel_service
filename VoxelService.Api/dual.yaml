@@ -24,4 +24,6 @@ pubsub:
     broker: 'amqp://guest:guest@localhost:5672'    # RabbitMQ broker url
 s3:
     override_base_path: ..\..\..\data          # Path based on where this project is to the data folder if locally
+http:
+    voxel_service: http://localhost:8081
     
