@@ -4,6 +4,9 @@ namespace VoxelService.Data;
 
 public class Voxel(int x, int y, int z)
 {
+    // Max Memory allowed = 953mb
+    private const int MaxVoxelWidth = 500;
+    
     // Pack the x, y, and z coordinates into a single long
     private readonly long _packed = Pack(x, y, z);
 
@@ -43,6 +46,11 @@ public class Voxel(int x, int y, int z)
     // Packing and unpacking methods
     public static long Pack(int x, int y, int z)
     {
+        // Clamp to prevent huge memory usage. 
+        x = Math.Clamp(x, -MaxVoxelWidth, MaxVoxelWidth);
+        y = Math.Clamp(y, -MaxVoxelWidth, MaxVoxelWidth);
+        z = Math.Clamp(z, -MaxVoxelWidth, MaxVoxelWidth);
+            
         // Ensure values fit within 21 bits (-2^20 to 2^20-1)
         const int maxValue = 0x1FFFFF; // 21 bits
         if (x < -maxValue || x > maxValue || y < -maxValue || y > maxValue || z < -maxValue || z > maxValue)
