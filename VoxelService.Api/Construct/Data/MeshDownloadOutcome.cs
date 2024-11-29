@@ -3,8 +3,8 @@ namespace VoxelService.Api.Construct.Data;
 public class MeshDownloadOutcome
 {
     public bool Success { get; set; }
-    public string Message { get; set; }
-    public Stream Stream { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public Stream? Stream { get; set; }
 
     public static MeshDownloadOutcome MeshDownloaded(Stream stream) 
         => new() { Success = true, Stream = stream };

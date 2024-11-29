@@ -16,4 +16,6 @@ public static class ConfigurationReader
     }
 
     public static float GetVoxelSize() => 2f;
+
+    public static TimeSpan GetConstructMeshDownloadThrottleTime() => TimeSpan.FromSeconds(5);
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.Caching.Memory;
 using SharpGLTF.Schema2;
 using VoxelService.Api.Common;
 using VoxelService.Api.Construct.Data;
@@ -25,6 +26,8 @@ public class VoxelCacheQueue(
     private readonly IConstructElementVoxelReaderService _constructElementVoxelReaderService =
         provider.GetRequiredService<IConstructElementVoxelReaderService>();
 
+    private readonly MemoryCache _constructThrottlingCache = new(new MemoryCacheOptions());
+
     private TimeSpan TickSleep { get; set; } = TimeSpan.FromSeconds(1 / 60d);
 
     public static ConcurrentQueue<ulong> Queue { get; } = [];
@@ -36,6 +39,15 @@ public class VoxelCacheQueue(
             ReportHeartbeat();
             Thread.Sleep(TickSleep);
 
+            return;
+        }
+
+        var isThrottled = _constructThrottlingCache.Get(constructId) != null;
+        if (isThrottled)
+        {
+            ReportHeartbeat();
+            _logger.LogInformation("Throttled: {ConstructId}", constructId);
+            
             return;
         }
 
@@ -64,6 +76,12 @@ public class VoxelCacheQueue(
             }
         }
 
+        if (meshDownloadOutcome.Stream == null)
+        {
+            _logger.LogError("Successful Outcome but without Stream. Unexpected.");
+            throw new InvalidOperationException("Successful Outcome but without Stream. Unexpected.");
+        }
+        
         var model = ModelRoot.ReadGLB(meshDownloadOutcome.Stream);
         _logger.LogInformation("Read GLB");
 
@@ -86,6 +104,15 @@ public class VoxelCacheQueue(
 
             ConstructVoxelCache.SetConstructData(constructId, new ConstructVoxelData { Voxels = voxels });
         }
+
+        _constructThrottlingCache.Set(
+            constructId, 
+            true,
+            new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = ConfigurationReader.GetConstructMeshDownloadThrottleTime()
+            }
+        );
 
         ReportHeartbeat();
         Thread.Sleep(TickSleep);
