@@ -99,6 +99,11 @@ public class VoxelCacheQueue(
             _logger.LogError(e, "Construct mesh is invalid");
             model = null;
         }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unexpected error: Construct mesh is invalid");
+            model = null;
+        }
 
         using (var _ = new TimeMeasure(_logger, "voxelization"))
         {
