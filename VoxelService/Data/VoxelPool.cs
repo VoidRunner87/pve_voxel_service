@@ -4,7 +4,12 @@ namespace VoxelService.Data;
 
 public static class VoxelPool
 {
-    private static readonly MemoryCache Cache = new(new MemoryCacheOptions { TrackStatistics = true });
+    private static readonly MemoryCache Cache = new(
+        new MemoryCacheOptions
+        {
+            TrackStatistics = true,
+            ExpirationScanFrequency = TimeSpan.FromSeconds(1)
+        });
     
     public static Voxel Voxel(int x, int y, int z)
     {
