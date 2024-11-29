@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Caching.Memory;
 using SharpGLTF.Schema2;
+using SharpGLTF.Validation;
 using VoxelService.Api.Common;
 using VoxelService.Api.Construct.Data;
 using VoxelService.Api.Construct.Interfaces;
@@ -42,11 +43,16 @@ public class VoxelCacheQueue(
             return;
         }
 
+        using var logScope = _logger.BeginScope(new Dictionary<string, object>
+        {
+            { nameof(constructId), constructId }
+        });
+
         var isThrottled = _constructThrottlingCache.Get(constructId) != null;
         if (isThrottled)
         {
             ReportHeartbeat();
-            _logger.LogInformation("Throttled: {ConstructId}", constructId);
+            _logger.LogInformation("Throttled");
             
             return;
         }
@@ -59,7 +65,7 @@ public class VoxelCacheQueue(
             var readElementVoxelsTask = _constructElementVoxelReaderService
                 .QueryConstructElementsBoundingBoxes(constructId);
             var downloadMeshTask = _constructMeshDownloaderService
-                .DownloadConstructMeshAsync(constructId, 2);
+                .DownloadConstructMeshAsync(constructId, ConfigurationReader.GetMeshDownloadLOD());
 
             await Task.WhenAll([readElementVoxelsTask, downloadMeshTask]);
 
@@ -81,19 +87,32 @@ public class VoxelCacheQueue(
             _logger.LogError("Successful Outcome but without Stream. Unexpected.");
             throw new InvalidOperationException("Successful Outcome but without Stream. Unexpected.");
         }
-        
-        var model = ModelRoot.ReadGLB(meshDownloadOutcome.Stream);
-        _logger.LogInformation("Read GLB");
+
+        ModelRoot? model;
+        try
+        {
+            model = ModelRoot.ReadGLB(meshDownloadOutcome.Stream);
+            _logger.LogInformation("Read GLB");
+        }
+        catch (SchemaException e)
+        {
+            _logger.LogError(e, "Construct mesh is invalid");
+            model = null;
+        }
 
         using (var _ = new TimeMeasure(_logger, "voxelization"))
         {
-            var voxels = Voxelizer.VoxelizeModel(
-                model,
-                new VoxelizerConfiguration
-                {
-                    VoxelSize = ConfigurationReader.GetVoxelSize()
-                }
-            );
+            HashSet<Voxel> voxels = [];
+            if (model != null)
+            {
+                voxels = Voxelizer.VoxelizeModel(
+                    model,
+                    new VoxelizerConfiguration
+                    {
+                        VoxelSize = ConfigurationReader.GetVoxelSize()
+                    }
+                );
+            }
 
             foreach (var voxel in elementVoxelsOutcome.Voxels)
             {
