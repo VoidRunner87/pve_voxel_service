@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using VoxelService.Api.Construct.Data;
+using VoxelService.Api.Construct.Services;
 using VoxelService.Data;
 
 namespace VoxelService.Api.Mesh.Controllers;
@@ -13,7 +15,9 @@ public class VoxelController : Controller
         return Ok(
             new
             {
-                Count = VoxelPool.GetCount(),
+                ConstructCount = ConstructVoxelCache.Data.Count,
+                QueueCount = VoxelCacheQueue.Queue.Count, 
+                VoxelCount = VoxelPool.GetCount(),
             }
         );
     }

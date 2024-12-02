@@ -4,7 +4,7 @@ namespace VoxelService.Api.Construct.Data;
 
 public static class ConstructVoxelCache
 {
-    private static MemoryCache Data { get; } = new(
+    public static MemoryCache Data { get; } = new(
         new MemoryCacheOptions
         {
             TrackStatistics = true,

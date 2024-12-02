@@ -27,7 +27,8 @@ public class VoxelCacheQueue(
     private readonly IConstructElementVoxelReaderService _constructElementVoxelReaderService =
         provider.GetRequiredService<IConstructElementVoxelReaderService>();
 
-    private readonly MemoryCache _constructThrottlingCache = new(new MemoryCacheOptions());
+    private readonly MemoryCache _constructThrottlingCache =
+        new(new MemoryCacheOptions { ExpirationScanFrequency = TimeSpan.FromSeconds(1) });
 
     private TimeSpan TickSleep { get; set; } = TimeSpan.FromSeconds(1 / 60d);
 
@@ -53,7 +54,7 @@ public class VoxelCacheQueue(
         {
             ReportHeartbeat();
             _logger.LogInformation("Throttled");
-            
+
             return;
         }
 
@@ -123,14 +124,14 @@ public class VoxelCacheQueue(
             {
                 voxels.Add(voxel.Pooled());
             }
-            
+
             _logger.LogInformation("Found {Count} Voxels", voxels.Count);
 
             ConstructVoxelCache.SetConstructData(constructId, new ConstructVoxelData { Voxels = voxels });
         }
 
         _constructThrottlingCache.Set(
-            constructId, 
+            constructId,
             true,
             new MemoryCacheEntryOptions
             {
