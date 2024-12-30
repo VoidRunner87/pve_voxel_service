@@ -36,7 +36,7 @@ public static class ConstructVoxelCache
     {
         return new MemoryCacheEntryOptions
         {
-            SlidingExpiration = TimeSpan.FromMinutes(5)
+            SlidingExpiration = TimeSpan.FromMinutes(10)
         };
     }
 }
