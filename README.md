@@ -6,7 +6,7 @@ The challenge with modding in Dual Universe, is that these calculations are done
 
 When building the PVE mod, the AI needs to behave the same as a player would, and that include hits.
 
-This project then performs optimized calculations based on where the player and NPC ships are of a hit to a player ship.
+This project then performs optimized calculations based on where the player and NPC ships to hit another construct or ship.
 
 The service holds a maximum of a large cube of voxel data stored and voxel coordinates are bit compressed for better memory efficiency.
 
